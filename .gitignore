@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+.env
 
 # Cơ sở dữ liệu SQLite
 *.sqlite3
@@ -17,8 +18,6 @@ staticfiles/
 # VS Code
 .vscode/
 
-# File cấu hình bảo mật
-.env
 
 # Tệp hệ điều hành
 .DS_Store
