@@ -1,0 +1,25 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Cơ sở dữ liệu SQLite
+*.sqlite3
+
+# Môi trường ảo
+env/
+venv/
+
+# Django media & static files
+/media/
+staticfiles/
+
+# VS Code
+.vscode/
+
+# File cấu hình bảo mật
+.env
+
+# Tệp hệ điều hành
+.DS_Store
+Thumbs.db
