@@ -1,0 +1,10 @@
+<h2>Kết quả tìm kiếm cho: "{{ query }}"</h2>
+<ul>
+  {% for doc in documents %}
+    <li>{{ doc.title }} - {{ doc.uploaded_by.username }}
+      [<a href="{% url 'download' doc.id %}">Tải xuống</a>]
+    </li>
+  {% empty %}
+    <li>Không tìm thấy tài liệu nào.</li>
+  {% endfor %}
+</ul>

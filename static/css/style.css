@@ -1,0 +1,247 @@
+/* ==== Thiết lập chung ==== */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+  color: #333;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ==== Navbar ==== */
+.navbar {
+  background-color: #007BFF;
+  color: white;
+  padding: 12px 0;
+}
+
+.navbar .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar .left,
+.navbar .right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar a {
+  color: white;
+  text-decoration: none;
+}
+
+.logo {
+  height: 60px;
+  margin-right: 10px;
+}
+
+/* ==== Hộp nội dung chính ==== */
+.main-box {
+  background: #fff;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  margin-top: 20px;
+}
+
+/* ==== Flex 2 cột ==== */
+.main-wrapper {
+  display: flex;
+  gap: 30px;
+}
+
+/* ✅ Cột trái nhỏ hơn */
+.left-panel {
+  flex: 1;
+  max-width: 280px;        /* ⬅️ Giới hạn chiều rộng */
+  padding-right: 20px;
+  box-sizing: border-box;
+  word-wrap: break-word;   /* ⬅️ Cho chữ tự xuống dòng */
+  overflow-wrap: break-word;
+}
+
+/* ✅ Cột phải rộng hơn */
+.right-panel {
+  flex: 3;
+  padding-left: 20px;
+  background: #f9f9f9;
+  border-left: 1px solid #ddd;
+  box-sizing: border-box;
+}
+
+/* ==== Các section trong cột trái ==== */
+.section {
+  margin-bottom: 30px;
+}
+
+/* ==== Tiêu đề ==== */
+h1, h3, h4 {
+  color: #007BFF;
+}
+
+/* ==== Input / Button ==== */
+input[type="text"] {
+  padding: 8px;
+  width: 250px;
+  margin-right: 8px;
+  border: 1px solid #ccc;
+}
+
+button {
+  padding: 8px 12px;
+  background: #007BFF;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+/* ==== Danh sách ==== */
+ul {
+  list-style: disc;
+  margin-left: 20px;
+  padding-left: 15px;
+}
+
+.indent {
+  padding-left: 20px;
+  margin-left: 0;
+}
+
+.indent li {
+  line-height: 1.6;
+}
+
+.category-list li,
+.document-list li {
+  word-wrap: break-word;    /* ⬅️ Tương tự với từng mục */
+  overflow-wrap: break-word;
+}
+
+.category-list a,
+.document-list a {
+  display: inline-block;
+  max-width: 100%;
+  word-wrap: break-word;
+}
+
+.category-list a:hover,
+.document-list a:hover {
+  text-decoration: underline;
+}
+
+/* ==== Bài viết ==== */
+.post-item {
+  margin-bottom: 20px;
+}
+
+.post-item img {
+  max-width: 100%;
+  height: auto;
+  margin: 10px 0;
+  border-radius: 6px;
+}
+
+.post-item p {
+  margin: 6px 0;
+}
+
+.post-item hr {
+  border: none;
+  border-top: 1px solid #ccc;
+  margin: 10px 0;
+}
+
+/* ==== Ô tìm kiếm ==== */
+.search-box {
+  position: relative;
+  max-width: 250px;
+  width: 100%;
+}
+
+#live-search {
+  width: 100%;
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+#search-results {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  z-index: 10;
+  max-height: 200px;
+  overflow-y: auto;
+  display: none;
+  padding: 5px 0;
+  list-style: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+#search-results li {
+  padding: 8px 12px;
+  font-size: 14px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+
+#search-results li:last-child {
+  border-bottom: none;
+}
+
+#search-results li:hover {
+  background-color: #f2f2f2;
+}
+
+#search-results li a {
+  color: #000;
+  text-decoration: none;
+  display: block;
+  width: 100%;
+}
+/* ==== giao dien cho dien thoai ==== */
+@media (max-width: 768px) {
+  .main-wrapper {
+    flex-direction: column;
+  }
+
+  .left-panel, .right-panel {
+    flex: 1;
+    padding: 10px;
+    border: none;
+  }
+
+  .search-box {
+    max-width: 100%;
+  }
+
+  .navbar .container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .navbar .right {
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .logo {
+    height: 40px;
+  }
+}

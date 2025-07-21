@@ -1,0 +1,19 @@
+<{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tạo danh mục</title>
+</head>
+<body>
+  <h2>Tạo danh mục mới</h2>
+  
+  <form method="post">
+    {% csrf_token %}
+    <label for="name">Tên danh mục:</label><br>
+    <input type="text" name="name" required><br><br>
+    <button type="submit">Tạo</button>
+  </form>
+
+  <p><a href="{% url 'home' %}">← Quay lại trang chủ</a></p>
+</body>
+</html>

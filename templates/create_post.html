@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Tạo bài viết{% endblock %}
+
+{% block content %}
+<div class="main-box">
+  <h2>📝 Tạo bài viết mới</h2>
+
+  <form method="post" enctype="multipart/form-data" style="max-width: 800px;">
+    {% csrf_token %}
+    
+    <div class="form-group">
+      {{ form.title.label_tag }}
+      {{ form.title }}
+    </div>
+
+    <div class="form-group">
+      {{ form.content.label_tag }}
+      {{ form.content }}
+    </div>
+
+    <div class="form-group">
+      {{ form.image.label_tag }}
+      {{ form.image }}
+    </div>
+
+    <button type="submit">Đăng bài</button>
+  </form>
+
+  <p><a href="{% url 'post_list' %}">← Quay lại danh sách bài viết</a></p>
+</div>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tạo thư mục mới</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+  <div class="container">
+    <h2>Tạo thư mục mới trong danh mục: {{ category.name }}</h2>
+
+    <form method="post">
+      {% csrf_token %}
+      <label for="name">Tên thư mục:</label>
+      <input type="text" name="name" required>
+      <br><br>
+      <button type="submit">Tạo</button>
+    </form>
+
+    <p><a href="{% url 'category_detail' category.id %}">← Quay lại danh mục</a></p>
+  </div>
+
+</body>
+</html>

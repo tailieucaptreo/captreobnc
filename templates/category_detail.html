@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Danh mục: {{ category.name }}{% endblock %}
+
+{% block content %}
+  <h2>Danh mục: {{ category.name }}</h2>
+
+  {% if user.is_authenticated and user.is_staff %}
+    <p><a href="{% url 'create_folder' category.id %}">+ Tạo thư mục mới</a></p>
+  {% endif %}
+
+  <h3>Danh sách thư mục</h3>
+  <ul>
+    {% for folder in folders %}
+      <li>
+        <a href="{% url 'folder_detail' folder.id %}">{{ folder.name }}</a>
+        {% if user.is_authenticated and user.is_staff %}
+          [<a href="{% url 'delete_folder' folder.id %}" onclick="return confirm('Bạn có chắc muốn xoá thư mục này không?')">Xoá</a>]
+        {% endif %}
+      </li>
+    {% empty %}
+      <li>Chưa có thư mục nào trong danh mục này.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
+

@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Upload tài liệu</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+  <div class="container">
+    <h2>Upload tài liệu</h2>
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      
+      <!-- ❌ Bỏ trường nhập tiêu đề -->
+      <!-- <label for="title">Tên tài liệu:</label>
+      <input type="text" name="title" required> -->
+
+      <label for="file">Chọn file (có thể nhiều):</label><br>
+      <input type="file" name="files" multiple required><br><br>
+
+      <label for="folder">Chọn thư mục:</label><br>
+      <select name="folder">
+        <option value="">-- Không chọn thư mục --</option>
+        {% for folder in folders %}
+          <option value="{{ folder.id }}">{{ folder.name }}</option>
+        {% endfor %}
+      </select><br><br>
+
+      <button type="submit">Tải lên</button>
+    </form>
+
+    <p><a href="{% url 'home' %}">← Quay lại trang chủ</a></p>
+  </div>
+
+</body>
+</html>

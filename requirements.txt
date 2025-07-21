@@ -1,0 +1,4 @@
+Django==5.2.4
+social-auth-app-django==5.5.1
+requests==2.32.4
+PyJWT==2.10.1

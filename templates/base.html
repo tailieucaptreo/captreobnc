@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>{% block title %}Tài liệu Cáp Treo{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  {% if form.media %}
+    {{ form.media }}
+  {% endif %}
+</head>
+<body>
+
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="container">
+      <div class="left">
+        <a href="{% url 'home' %}">
+          <img src="{% static 'images/logo.png' %}" class="logo">
+          <strong>Tài liệu Cáp Treo</strong>
+        </a>
+      </div>
+      <div class="right">
+        <div class="search-box">
+          <input type="text" id="live-search" placeholder="Tìm kiếm tài liệu...">
+          <ul id="search-results"></ul>
+        </div>
+        {% if user.is_authenticated %}
+          <span>{{ user.username }}</span>
+          <form method="post" action="{% url 'logout' %}" style="display:inline; margin-left: 10px;">
+            {% csrf_token %}
+            <button type="submit">Đăng xuất</button>
+          </form>
+        {% else %}
+          <a href="{% url 'social:begin' 'google-oauth2' %}?next=/">Đăng nhập</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Nội dung -->
+  <div class="container">
+    <div class="main-box">
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+
+<script>
+  const input = document.getElementById("live-search");
+  const resultBox = document.getElementById("search-results");
+
+  input.addEventListener("keyup", function () {
+    const query = this.value.trim();
+    if (query.length === 0) {
+      resultBox.innerHTML = "";
+      resultBox.style.display = 'none';
+      return;
+    }
+
+    fetch(`/api/search/?q=${encodeURIComponent(query)}`)
+      .then(response => response.json())
+      .then(data => {
+        let html = "";
+        if (data.length > 0) {
+          data.forEach(doc => {
+            html += `<li><a href="${doc.download_url}">${doc.title}</a></li>`;
+          });
+        } else {
+          html = "<li>Không tìm thấy tài liệu nào.</li>";
+        }
+        resultBox.innerHTML = html;
+        resultBox.style.display = 'block';
+      });
+  });
+
+  document.addEventListener('click', function(e) {
+    if (!input.contains(e.target) && !resultBox.contains(e.target)) {
+      resultBox.style.display = 'none';
+    }
+  });
+</script>
+</body>
+</html>

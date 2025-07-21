@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Xem tài liệu{% endblock %}
+
+{% block content %}
+  <div class="main-box">
+    <h2>📄 {{ document.title }}</h2>
+    {% if document.file %}
+      <iframe src="{{ document.file.url }}" width="100%" height="600px" style="border: 1px solid #ccc; border-radius: 6px;"></iframe>
+      <p style="margin-top: 15px;">
+        <a href="{% url 'download' document.id %}">⬇️ Tải tài liệu</a>
+      </p>
+    {% else %}
+      <p>Không tìm thấy tệp đính kèm.</p>
+    {% endif %}
+  </div>
+{% endblock %}

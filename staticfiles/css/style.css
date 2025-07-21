@@ -1,0 +1,145 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+  color: #333;
+}
+
+.navbar {
+  background-color: #007BFF;
+  color: white;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar .left,
+.navbar .right {
+  display: flex;
+  align-items: center;
+}
+
+.navbar a {
+  color: white;
+  margin-left: 15px;
+  text-decoration: none;
+}
+
+.logo {
+  height: 60px;
+  margin-right: 10px;
+}
+
+.container,
+.main-box {
+  width: 100%;
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 25px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.main-wrapper {
+  display: flex;
+  gap: 30px;
+}
+
+/* Cột trái nhỏ hơn */
+.left-panel {
+  flex: 1;
+  padding-right: 20px;
+  border-right: 2px solid #007BFF;
+}
+
+/* Cột phải rộng hơn */
+.right-panel {
+  flex: 5;
+  padding-left: 20px;
+  background: #f9f9f9;
+  border-left: 1px solid #ddd;
+}
+
+.section {
+  margin-bottom: 30px;
+}
+
+h1 {
+  margin: 20px 0;
+  color: #007BFF;
+}
+
+input[type="text"] {
+  padding: 8px;
+  width: 250px;
+  margin-right: 8px;
+  border: 1px solid #ccc;
+}
+
+button {
+  padding: 8px 12px;
+  background: #007BFF;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+ul {
+  list-style: disc;
+  margin-left: 20px;
+  padding-left: 15px;
+}
+
+.indent {
+  padding-left: 40px;
+  margin-left: 0;
+}
+
+.indent li {
+  line-height: 1.6;
+}
+
+.category-list li,
+.document-list li {
+  margin-bottom: 12px;
+}
+
+.category-list a,
+.document-list a {
+  text-decoration: none;
+  color: #007bff;
+}
+
+.category-list a:hover,
+.document-list a:hover {
+  text-decoration: underline;
+}
+
+.post-item {
+  margin-bottom: 20px;
+}
+
+.post-item h4 {
+  margin: 0;
+  color: #007BFF;
+}
+
+.post-item img {
+  max-width: 100%;
+  height: auto;
+  margin: 10px 0;
+  border-radius: 6px;
+}
+
+.post-item p {
+  margin: 6px 0;
+}
+
+.post-item hr {
+  border: none;
+  border-top: 1px solid #ccc;
+  margin: 10px 0;
+}

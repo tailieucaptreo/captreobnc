@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Danh sách bài viết{% endblock %}
+
+{% block content %}
+<div class="main-box">
+  <h2>📰 Danh sách bài viết</h2>
+
+  {% if posts %}
+    <ul class="post-list">
+      {% for post in posts %}
+        <li style="margin-bottom: 30px;">
+          <h3>{{ post.title }}</h3>
+
+          {% if post.images.all %}
+            {% for img in post.images.all %}
+              <img src="{{ img.image.url }}" style="max-width: 300px; height: auto; margin: 10px 0;">
+            {% endfor %}
+          {% endif %}
+
+          <p>{{ post.content|linebreaks }}</p>
+          <p><small>Đăng bởi: {{ post.author.username }} - {{ post.created_at|date:"d/m/Y H:i" }}</small></p>
+
+          {% if user.is_authenticated and user.is_staff %}
+            <p>
+              [<a href="{% url 'delete_post' post.id %}" onclick="return confirm('Bạn có chắc muốn xoá bài viết này?');">🗑 Xoá</a>]
+            </p>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Chưa có bài viết nào.</p>
+  {% endif %}
+
+  <p><a href="{% url 'home' %}">← Quay lại trang chủ</a></p>
+</div>
+{% endblock %}

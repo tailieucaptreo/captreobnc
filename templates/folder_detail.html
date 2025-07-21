@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Thư mục: {{ folder.name }}{% endblock %}
+
+{% block content %}
+  <h2>Thư mục: {{ folder.name }}</h2>
+
+  {% if user.is_staff %}
+    <p><a href="{% url 'upload' %}">+ Upload tài liệu</a></p>
+  {% endif %}
+
+  {% if documents %}
+    <ul>
+      {% for doc in documents %}
+        <li>
+          {{ doc.title }} 
+          {% if user.is_authenticated %}
+            {% if user.is_staff %}
+              [<a href="{% url 'delete_document' doc.id %}" onclick="return confirm('Xoá tài liệu này?');">Xoá</a>]
+            {% endif %}
+            [<a href="{{ doc.file.url }}" target="_blank">[Xem trực tiếp]</a>]
+            [<a href="{% url 'download' doc.id %}">Tải xuống</a>]
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Chưa có tài liệu nào trong thư mục này.</p>
+  {% endif %}
+{% endblock %}

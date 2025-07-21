@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Xoá bài viết{% endblock %}
+
+{% block content %}
+<div class="main-box">
+  <h2>Bạn có chắc muốn xoá bài viết: "{{ post.title }}"?</h2>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">✅ Xác nhận xoá</button>
+    <a href="{% url 'post_list' %}">❌ Huỷ</a>
+  </form>
+</div>
+{% endblock %}

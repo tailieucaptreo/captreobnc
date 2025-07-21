@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{ category.name }} - Tài liệu</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  <div class="container">
+    <h2>Tài liệu trong danh mục: {{ category.name }}</h2>
+
+    {% if user.is_authenticated and user.is_staff %}
+       <p>
+         <a href="{% url 'create_folder' category.id %}">+ Tạo thư mục trong danh mục này</a>
+      </p>
+    {% endif %}
+
+    <ul>
+      {% for doc in documents %}
+        <li>
+          {{ doc.title }} 
+          {% if user.is_staff %}
+              - {{ doc.uploaded_by.username }}
+          {% endif %}
+          [<a href="{% url 'download' doc.id %}">Tải xuống</a>]
+        </li>
+      {% empty %}
+        <li>Chưa có tài liệu nào trong danh mục này.</li>
+      {% endfor %}
+    </ul>
+
+    <p><a href="{% url 'home' %}">← Quay lại trang chủ</a></p>
+  </div>
+</body>
+</html>

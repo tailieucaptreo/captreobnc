@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block title %}Trang chủ{% endblock %}
+
+{% block content %}
+<div class="main-wrapper">
+  <!-- Cột trái -->
+  <div class="left-panel">
+    {% if user.is_authenticated and user.is_staff %}
+      <p>
+        <a href="{% url 'upload' %}">📤 Upload tài liệu</a> |
+        <a href="{% url 'create_post' %}">📝 Tạo bài viết</a> |
+        <a href="{% url 'create_category' %}">➕ Tạo danh mục</a>
+      </p>
+    {% endif %}
+
+    <div class="section">
+      <h3>📁 <strong>Danh mục</strong></h3>
+      <ul class="category-list indent">
+        {% for cat in categories %}
+          <li>
+           <a href="{% url 'category_detail' cat.id %}">{{ cat.name }}</a>
+           {% if user.is_authenticated and user.is_staff %}
+           [<a href="{% url 'delete_category' cat.id %}" onclick="return confirm('Bạn có chắc muốn xoá danh mục này?');">Xoá</a>]
+           {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="section">
+      <h3>📚 <strong>Danh sách tài liệu</strong></h3>
+      {% if documents %}
+        <ul class="document-list indent">
+          {% for doc in documents %}
+            <li>
+              {{ doc.title }}<br>
+              {% if user.is_authenticated %}
+              <span style="font-size: 90%;">
+                [<a href="{% url 'view_document' doc.id %}">Xem trực tiếp</a>]
+                [<a href="{% url 'download' doc.id %}">Tải xuống</a>]
+                {% if user.is_authenticated and user.is_staff %}
+                  [<a href="{% url 'delete_document' doc.id %}" onclick="return confirm('Bạn có chắc muốn xoá tài liệu này?');">Xoá</a>]
+                {% endif %}
+              </span> 
+              {% endif %} 
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>Chưa có tài liệu nào.</p>
+      {% endif %}
+    </div>
+
+    <p><a href="{% url 'post_list' %}">📰 Xem tất cả bài viết</a></p>
+  </div>
+
+  <!-- Cột phải -->
+  <div class="right-panel">
+    <h3>📰 Bài viết mới nhất</h3>
+    {% for post in posts %}
+      <div class="post-item">
+        <h4>{{ post.title }}</h4>
+        {% if post.image %}
+          <img src="{{ post.image.url }}" alt="{{ post.title }}">
+        {% endif %}
+        <p>{{ post.content|safe }}</p>
+        <p><em>Đăng bởi {{ post.author.username }} - {{ post.created_at|date:"d/m/Y H:i" }}</em></p>
+        <hr>
+      </div>
+    {% empty %}
+      <p>Chưa có bài viết nào.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
