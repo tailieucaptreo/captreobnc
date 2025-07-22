@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 .env
+tailieucaptreo/settings.py
 
 # Cơ sở dữ liệu SQLite
 *.sqlite3
