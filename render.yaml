@@ -14,3 +14,7 @@ services:
         sync: false
       - key: GOOGLE_OAUTH_CLIENT_SECRET
         sync: false
+      - key: DEBUG
+        value: false
+      - key: ALLOWED_HOSTS
+        value: captreobnc.onrender.com
