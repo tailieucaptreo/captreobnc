@@ -8,7 +8,9 @@ services:
       python manage.py migrate
       python create_superuser.py  
     startCommand: |
-      python create_superuser.py && gunicorn tailieucaptreo.wsgi:application
+      python manage.py migrate
+      python create_superuser.py
+      gunicorn tailieucaptreo.wsgi:application
     envVars:
       - key: DJANGO_SECRET_KEY
         sync: false
