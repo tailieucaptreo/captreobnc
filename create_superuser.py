@@ -9,9 +9,9 @@ django.setup()
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
-username = "admin"
-email = "admin@captreo.com"
-password = "admin123"
+username = "captreobnc01"
+email = "captreobnc01@gmail.com"
+password = "Captreo2025#"
 
 if not User.objects.filter(username=username).exists():
     User.objects.create_superuser(username=username, email=email, password=password)
