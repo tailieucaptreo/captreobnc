@@ -4,10 +4,11 @@ services:
     env: python
     buildCommand: |
       pip install -r requirements.txt
-      python manage.py collectstatic --noinput 
-    startCommand: |
+      python manage.py collectstatic --noinput
       python manage.py migrate
-      python create_superuser.py
+      # Nếu cần tạo superuser tự động, giữ dòng sau, nếu không thì bỏ đi
+      # python create_superuser.py
+    startCommand: |
       gunicorn tailieucaptreo.wsgi:application
     envVars:
       - key: DJANGO_SECRET_KEY
@@ -18,7 +19,7 @@ services:
         sync: false
       - key: DEBUG
         value: false
-      - key: ALLOWED_HOSTS
+      - key: DJANGO_ALLOWED_HOSTS
         value: captreobnc.onrender.com
       - key: CLOUDINARY_CLOUD_NAME
         sync: false
