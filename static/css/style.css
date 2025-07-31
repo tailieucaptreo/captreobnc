@@ -257,3 +257,18 @@ ul {
     height: 40px;
   }
 }
+
+/* ==== Google login button fix ==== */
+a[href*="google-oauth2"] {
+  display: inline-block !important;
+  padding: 8px 12px;
+  background-color: #4285F4;
+  color: white;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+a[href*="google-oauth2"]:hover {
+  background-color: #3367D6;
+}
