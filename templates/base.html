@@ -14,27 +14,35 @@
 
   <!-- Navbar -->
   <div class="navbar">
-    <div class="container">
-      <div class="left">
-        <a href="{% url 'home' %}">
-          <img src="{% static 'images/logo.png' %}" class="logo">
-          <strong>Tài liệu Cáp Treo</strong>
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+
+      <!-- Bên trái: logo + tên -->
+      <div class="left" style="display: flex; align-items: center;">
+        <a href="{% url 'home' %}" style="display: flex; align-items: center; text-decoration: none; color: white;">
+          <img src="{% static 'images/logo.png' %}" class="logo" style="height: 60px; margin-right: 10px;">
+          <strong style="font-size: 20px;">Tài liệu Cáp Treo</strong>
         </a>
       </div>
-      <div class="right">
+
+      <!-- Bên phải: tìm kiếm + login -->
+      <div class="right" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+
+        <!-- Ô tìm kiếm -->
         <div class="search-box">
           <input type="text" id="live-search" placeholder="Tìm kiếm tài liệu...">
           <ul id="search-results"></ul>
         </div>
+
         {% if user.is_authenticated %}
-          <span>{{ user.username }}</span>
+          <span style="color: white;">{{ user.username }}</span>
           <form method="post" action="{% url 'logout' %}" style="display:inline; margin-left: 10px;">
             {% csrf_token %}
             <button type="submit">Đăng xuất</button>
           </form>
         {% else %}
-          <a href="{% url 'social:begin' 'google-oauth2' %}?next=/">Đăng nhập</a>
+          <a href="{% url 'social:begin' 'google-oauth2' %}?next=/" style="color: white;">Đăng nhập</a>
         {% endif %}
+
       </div>
     </div>
   </div>
