@@ -36,6 +36,7 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
+  margin-left: auto;  /* ✅ Đẩy ô tìm kiếm sang phải */
 }
 
 .navbar a {
