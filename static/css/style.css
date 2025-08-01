@@ -159,6 +159,7 @@ ul {
   height: auto;
   margin: 10px 0;
   border-radius: 6px;
+  overflow: hidden;
 }
 
 .post-item p {
@@ -173,10 +174,10 @@ ul {
 
 /* ==== Ô tìm kiếm ==== */
 .search-box {
-  position: relative;
-  max-width: 250px;  /* giảm nhẹ nếu bị tràn */
+  max-width: 220px;
   width: 250px;
   flex-shrink: 1;
+  position: relative;
 }
 
 #live-search {
@@ -262,20 +263,8 @@ a[href*="google-oauth2"]:hover {
   background-color: #3367D6;
 }
 
-/* ===== Fix hiển thị nút đăng nhập ===== */
+.right a[href*="google-oauth2"],
 .navbar .right a[href*="google-oauth2"] {
-  margin-left: 10px;
-  flex-shrink: 0;
-}
-
-/* Nếu cần giảm chiều ngang ô tìm kiếm tránh đẩy nút login ra khỏi view */
-.search-box {
-  max-width: 220px;
-  flex-shrink: 1;
-}
-
-/* ✅ Làm rõ nút đăng nhập Google */
-.right a[href*="google-oauth2"] {
   display: inline-block !important;
   background-color: #4285F4;
   padding: 8px 14px;
@@ -288,6 +277,3 @@ a[href*="google-oauth2"]:hover {
   white-space: nowrap;
 }
 
-.right a[href*="google-oauth2"]:hover {
-  background-color: #3367D6;
-}

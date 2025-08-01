@@ -2,10 +2,11 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Tài liệu Cáp Treo{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="icon" href="{% static 'images/favicon.ico' %}">  <!-- favicon nếu có -->
   {% if form.media %}
     {{ form.media }}
   {% endif %}
@@ -14,20 +15,18 @@
 
   <!-- Navbar -->
   <div class="navbar">
-    <div class="container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+    <div class="container">
 
       <!-- Bên trái: logo + tên -->
-      <div class="left" style="display: flex; align-items: center;">
-        <a href="{% url 'home' %}" style="display: flex; align-items: center; text-decoration: none; color: white;">
-          <img src="{% static 'images/logo.png' %}" class="logo" style="height: 60px; margin-right: 10px;">
+      <div class="left">
+        <a href="{% url 'home' %}">
+          <img src="{% static 'images/logo.png' %}" class="logo">
           <strong style="font-size: 20px;">Tài liệu Cáp Treo</strong>
         </a>
       </div>
 
       <!-- Bên phải: tìm kiếm + login -->
-      <div class="right" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-
-        <!-- Ô tìm kiếm -->
+      <div class="right">
         <div class="search-box">
           <input type="text" id="live-search" placeholder="Tìm kiếm tài liệu...">
           <ul id="search-results"></ul>
@@ -40,53 +39,54 @@
             <button type="submit">Đăng xuất</button>
           </form>
         {% else %}
-          <a href="{% url 'social:begin' 'google-oauth2' %}?next=/" style="color: white;">Đăng nhập</a>
+          <a href="{% url 'social:begin' 'google-oauth2' %}?next=/">Đăng nhập</a>
         {% endif %}
-
       </div>
+
     </div>
   </div>
 
-  <!-- Nội dung -->
+  <!-- Nội dung chính -->
   <div class="container">
     <div class="main-box">
       {% block content %}{% endblock %}
     </div>
   </div>
 
-<script>
-  const input = document.getElementById("live-search");
-  const resultBox = document.getElementById("search-results");
+  <!-- Live Search Script -->
+  <script>
+    const input = document.getElementById("live-search");
+    const resultBox = document.getElementById("search-results");
 
-  input.addEventListener("keyup", function () {
-    const query = this.value.trim();
-    if (query.length === 0) {
-      resultBox.innerHTML = "";
-      resultBox.style.display = 'none';
-      return;
-    }
+    input.addEventListener("keyup", function () {
+      const query = this.value.trim();
+      if (query.length === 0) {
+        resultBox.innerHTML = "";
+        resultBox.style.display = 'none';
+        return;
+      }
 
-    fetch(`/api/search/?q=${encodeURIComponent(query)}`)
-      .then(response => response.json())
-      .then(data => {
-        let html = "";
-        if (data.length > 0) {
-          data.forEach(doc => {
-            html += `<li><a href="${doc.download_url}">${doc.title}</a></li>`;
-          });
-        } else {
-          html = "<li>Không tìm thấy tài liệu nào.</li>";
-        }
-        resultBox.innerHTML = html;
-        resultBox.style.display = 'block';
-      });
-  });
+      fetch(`/api/search/?q=${encodeURIComponent(query)}`)
+        .then(response => response.json())
+        .then(data => {
+          let html = "";
+          if (data.length > 0) {
+            data.forEach(doc => {
+              html += `<li><a href="${doc.download_url}">${doc.title}</a></li>`;
+            });
+          } else {
+            html = "<li>Không tìm thấy tài liệu nào.</li>";
+          }
+          resultBox.innerHTML = html;
+          resultBox.style.display = 'block';
+        });
+    });
 
-  document.addEventListener('click', function(e) {
-    if (!input.contains(e.target) && !resultBox.contains(e.target)) {
-      resultBox.style.display = 'none';
-    }
-  });
-</script>
+    document.addEventListener('click', function(e) {
+      if (!input.contains(e.target) && !resultBox.contains(e.target)) {
+        resultBox.style.display = 'none';
+      }
+    });
+  </script>
 </body>
 </html>
