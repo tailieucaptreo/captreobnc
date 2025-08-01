@@ -275,16 +275,21 @@ a[href*="google-oauth2"]:hover {
   flex-shrink: 1;
 }
 
-/* ===== Hiển thị rõ nút Đăng nhập bằng Google ===== */
-a[href*="google-oauth2"] {
+/* ✅ Làm rõ nút đăng nhập Google */
+.right a[href*="google-oauth2"] {
   display: inline-block !important;
-  padding: 8px 14px;
   background-color: #4285F4;
   color: white !important;
-  border-radius: 5px;
-  font-weight: bold;
+  padding: 8px 14px;
   font-size: 14px;
+  font-weight: bold;
+  border-radius: 4px;
   text-decoration: none;
-  white-space: nowrap;
   border: none;
+  margin-left: 10px;
+  white-space: nowrap;
+}
+
+.right a[href*="google-oauth2"]:hover {
+  background-color: #3367D6;
 }
