@@ -277,3 +277,24 @@ a[href*="google-oauth2"]:hover {
   white-space: nowrap;
 }
 
+.logo-text {
+  font-size: 20px;
+  color: white;
+  white-space: nowrap;
+}
+
+.username {
+  color: white;
+  margin-left: 10px;
+}
+
+/* Bỏ viền dọc nếu có */
+.left-panel, .right-panel {
+  border: none !important;
+}
+
+/* Đảm bảo navbar không bị wrap nếu đủ chiều ngang */
+.navbar .container {
+  flex-wrap: nowrap;
+}
+

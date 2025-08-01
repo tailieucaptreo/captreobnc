@@ -6,10 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Tài liệu Cáp Treo{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
-  <link rel="icon" href="{% static 'images/favicon.ico' %}">  <!-- favicon nếu có -->
-  {% if form.media %}
-    {{ form.media }}
-  {% endif %}
 </head>
 <body>
 
@@ -17,15 +13,15 @@
   <div class="navbar">
     <div class="container">
 
-      <!-- Bên trái: logo + tên -->
+      <!-- Logo bên trái -->
       <div class="left">
         <a href="{% url 'home' %}">
           <img src="{% static 'images/logo.png' %}" class="logo">
-          <strong style="font-size: 20px;">Tài liệu Cáp Treo</strong>
+          <strong class="logo-text">Tài liệu Cáp Treo</strong>
         </a>
       </div>
 
-      <!-- Bên phải: tìm kiếm + login -->
+      <!-- Tìm kiếm và Đăng nhập bên phải -->
       <div class="right">
         <div class="search-box">
           <input type="text" id="live-search" placeholder="Tìm kiếm tài liệu...">
@@ -33,8 +29,8 @@
         </div>
 
         {% if user.is_authenticated %}
-          <span style="color: white;">{{ user.username }}</span>
-          <form method="post" action="{% url 'logout' %}" style="display:inline; margin-left: 10px;">
+          <span class="username">{{ user.username }}</span>
+          <form method="post" action="{% url 'logout' %}">
             {% csrf_token %}
             <button type="submit">Đăng xuất</button>
           </form>
@@ -46,47 +42,46 @@
     </div>
   </div>
 
-  <!-- Nội dung chính -->
+  <!-- Nội dung -->
   <div class="container">
     <div class="main-box">
       {% block content %}{% endblock %}
     </div>
   </div>
 
-  <!-- Live Search Script -->
-  <script>
-    const input = document.getElementById("live-search");
-    const resultBox = document.getElementById("search-results");
+<script>
+  const input = document.getElementById("live-search");
+  const resultBox = document.getElementById("search-results");
 
-    input.addEventListener("keyup", function () {
-      const query = this.value.trim();
-      if (query.length === 0) {
-        resultBox.innerHTML = "";
-        resultBox.style.display = 'none';
-        return;
-      }
+  input.addEventListener("keyup", function () {
+    const query = this.value.trim();
+    if (query.length === 0) {
+      resultBox.innerHTML = "";
+      resultBox.style.display = 'none';
+      return;
+    }
 
-      fetch(`/api/search/?q=${encodeURIComponent(query)}`)
-        .then(response => response.json())
-        .then(data => {
-          let html = "";
-          if (data.length > 0) {
-            data.forEach(doc => {
-              html += `<li><a href="${doc.download_url}">${doc.title}</a></li>`;
-            });
-          } else {
-            html = "<li>Không tìm thấy tài liệu nào.</li>";
-          }
-          resultBox.innerHTML = html;
-          resultBox.style.display = 'block';
-        });
-    });
+    fetch(`/api/search/?q=${encodeURIComponent(query)}`)
+      .then(response => response.json())
+      .then(data => {
+        let html = "";
+        if (data.length > 0) {
+          data.forEach(doc => {
+            html += `<li><a href="${doc.download_url}">${doc.title}</a></li>`;
+          });
+        } else {
+          html = "<li>Không tìm thấy tài liệu nào.</li>";
+        }
+        resultBox.innerHTML = html;
+        resultBox.style.display = 'block';
+      });
+  });
 
-    document.addEventListener('click', function(e) {
-      if (!input.contains(e.target) && !resultBox.contains(e.target)) {
-        resultBox.style.display = 'none';
-      }
-    });
-  </script>
+  document.addEventListener('click', function(e) {
+    if (!input.contains(e.target) && !resultBox.contains(e.target)) {
+      resultBox.style.display = 'none';
+    }
+  });
+</script>
 </body>
 </html>
