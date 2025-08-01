@@ -175,8 +175,9 @@ ul {
 /* ==== Ô tìm kiếm ==== */
 .search-box {
   position: relative;
-  max-width: 250px;
+  max-width: 220px;  /* giảm nhẹ nếu bị tràn */
   width: 100%;
+  flex-shrink: 1;
 }
 
 #live-search {
@@ -260,4 +261,30 @@ ul {
 
 a[href*="google-oauth2"]:hover {
   background-color: #3367D6;
+}
+
+/* ===== Fix hiển thị nút đăng nhập ===== */
+.navbar .right a[href*="google-oauth2"] {
+  margin-left: 10px;
+  flex-shrink: 0;
+}
+
+/* Nếu cần giảm chiều ngang ô tìm kiếm tránh đẩy nút login ra khỏi view */
+.search-box {
+  max-width: 220px;
+  flex-shrink: 1;
+}
+
+/* ===== Hiển thị rõ nút Đăng nhập bằng Google ===== */
+a[href*="google-oauth2"] {
+  display: inline-block !important;
+  padding: 8px 14px;
+  background-color: #4285F4;
+  color: white !important;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 14px;
+  text-decoration: none;
+  white-space: nowrap;
+  border: none;
 }
