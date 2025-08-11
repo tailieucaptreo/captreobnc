@@ -1,24 +1,36 @@
+import unicodedata
+import re
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.http import FileResponse
 from django.db.models import Q
 from django.contrib import messages
+from django.http import JsonResponse
 from .models import Document, Category, Folder, Post
 from .forms import PostForm
-from django.http import JsonResponse
 
+
+# ======= Helper function =======
+def slugify_filename(filename):
+    """Chuyển tên file thành dạng an toàn (ASCII, không ký tự đặc biệt)."""
+    filename = unicodedata.normalize('NFKD', filename).encode('ascii', 'ignore').decode('ascii')
+    filename = re.sub(r'[^a-zA-Z0-9._-]', '_', filename)
+    return filename
+
+
+# ======= Trang chủ =======
 def home(request):
     categories = Category.objects.all()
     documents = Document.objects.all().order_by('-uploaded_at')
-    posts = Post.objects.all().order_by('-created_at')[:5]  # lấy 5 bài viết mới nhất
-
+    posts = Post.objects.all().order_by('-created_at')[:5]
     return render(request, 'home.html', {
         'categories': categories,
         'documents': documents,
         'posts': posts,
     })
 
+
+# ======= Danh mục & Thư mục =======
 def category_detail(request, category_id):
     category = get_object_or_404(Category, id=category_id)
     folders = Folder.objects.filter(category=category)
@@ -26,6 +38,7 @@ def category_detail(request, category_id):
         'category': category,
         'folders': folders,
     })
+
 
 def folder_detail(request, folder_id):
     folder = get_object_or_404(Folder, id=folder_id)
@@ -35,6 +48,7 @@ def folder_detail(request, folder_id):
         'documents': documents,
     })
 
+
 def documents_by_category(request, category_id):
     category = get_object_or_404(Category, id=category_id)
     documents = Document.objects.filter(folder__category=category).order_by('-uploaded_at')
@@ -43,39 +57,49 @@ def documents_by_category(request, category_id):
         'category': category,
     })
 
+
+# ======= Upload tài liệu =======
 @login_required
 def upload_document(request):
     if not request.user.is_staff:
         return render(request, 'no_permission.html')
 
     if request.method == 'POST':
-        files = request.FILES.getlist('files')  # lấy danh sách file
+        files = request.FILES.getlist('files')
         folder_id = request.POST.get('folder')
         folder = Folder.objects.get(id=folder_id) if folder_id else None
 
         for f in files:
+            f.name = slugify_filename(f.name)
             Document.objects.create(
-                title=f.name,  # dùng tên file làm tiêu đề
+                title=f.name,
                 file=f,
                 folder=folder,
                 uploaded_by=request.user
             )
+        messages.success(request, "Tài liệu đã được tải lên thành công.")
         return redirect('home')
 
     folders = Folder.objects.all()
     return render(request, 'upload.html', {'folders': folders})
 
 
+# ======= Download tài liệu từ Cloudinary =======
 @login_required
 def download_document(request, doc_id):
     doc = get_object_or_404(Document, id=doc_id)
-    return FileResponse(doc.file.open(), as_attachment=True)
+    # Redirect trực tiếp đến link Cloudinary để tải nhanh hơn
+    return redirect(doc.file.url)
 
+
+# ======= Xem tài liệu =======
 @login_required
 def view_document(request, doc_id):
     doc = get_object_or_404(Document, id=doc_id)
     return render(request, 'view_document.html', {'document': doc})
 
+
+# ======= Xóa tài liệu =======
 @login_required
 def delete_document(request, doc_id):
     if not request.user.is_staff:
@@ -83,10 +107,13 @@ def delete_document(request, doc_id):
 
     document = get_object_or_404(Document, id=doc_id)
     if document.file:
-        document.file.delete()
+        document.file.delete(save=False)  # xóa file trên Cloudinary
     document.delete()
+    messages.success(request, "Tài liệu đã được xoá.")
     return redirect('home')
 
+
+# ======= Quản lý Danh mục & Thư mục =======
 @login_required
 def create_category(request):
     if not request.user.is_staff:
@@ -95,45 +122,56 @@ def create_category(request):
     if request.method == 'POST':
         name = request.POST['name']
         Category.objects.create(name=name)
+        messages.success(request, "Danh mục đã được tạo.")
         return redirect('home')
-    
+
     return render(request, 'create_category.html')
+
 
 @login_required
 def delete_category(request, cat_id):
     if request.user.is_staff:
         Category.objects.filter(id=cat_id).delete()
+        messages.success(request, "Danh mục đã được xoá.")
     return redirect('home')
+
 
 @login_required
 def create_folder(request, category_id):
     category = get_object_or_404(Category, id=category_id)
     if not request.user.is_staff:
         return render(request, 'no_permission.html')
-    
+
     if request.method == 'POST':
         name = request.POST['name']
         Folder.objects.create(name=name, category=category)
+        messages.success(request, "Thư mục đã được tạo.")
         return redirect('category_detail', category_id=category.id)
-    
+
     return render(request, 'create_folder.html', {'category': category})
+
 
 @login_required
 def delete_folder(request, folder_id):
     if not request.user.is_staff:
         return render(request, 'no_permission.html')
-    
+
     folder = get_object_or_404(Folder, id=folder_id)
-    Document.objects.filter(folder=folder).delete()
+    # Xóa tài liệu trong thư mục (file trên Cloudinary cũng sẽ bị xóa)
+    for doc in Document.objects.filter(folder=folder):
+        if doc.file:
+            doc.file.delete(save=False)
+        doc.delete()
     folder.delete()
     messages.success(request, "Thư mục đã được xoá.")
     return redirect('category_detail', category_id=folder.category.id)
 
-# ------- BÀI VIẾT --------
 
+# ======= Bài viết =======
 def post_list(request):
     posts = Post.objects.all().order_by('-created_at')
     return render(request, 'post_list.html', {'posts': posts})
+
 
 @login_required
 def create_post(request):
@@ -153,6 +191,7 @@ def create_post(request):
 
     return render(request, 'create_post.html', {'form': form})
 
+
 @login_required
 def delete_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
@@ -168,6 +207,8 @@ def delete_post(request, post_id):
 
     return render(request, 'confirm_delete.html', {'post': post})
 
+
+# ======= Tìm kiếm =======
 def search_documents(request):
     query = request.GET.get('q')
     documents = Document.objects.filter(
@@ -179,6 +220,7 @@ def search_documents(request):
         'documents': documents,
         'query': query
     })
+
 
 def api_search_documents(request):
     query = request.GET.get('q', '')
