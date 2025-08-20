@@ -11,7 +11,7 @@ class Category(models.Model):
     name = models.CharField(max_length=200)
 
     def __str__(self):
-        return str(self.name or "")
+        return self.name or ""
 
 
 # ----- Hàm slug cho tên file -----
@@ -29,30 +29,28 @@ class Folder(models.Model):
     parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='subfolders')
 
     def __str__(self):
-        return str(self.name or "")
+        return self.name or ""
 
 
 # ----- Tài liệu -----
 class Document(models.Model):
     title = models.CharField(max_length=255)
-    file = CloudinaryField('file', resource_type="auto", folder="documents")  # lưu vào thư mục "documents"
+    file = CloudinaryField(resource_type="auto", folder="documents")  # bỏ 'file' label cho gọn
     folder = models.ForeignKey(Folder, on_delete=models.CASCADE, related_name='documents', null=True, blank=True)
     uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return str(self.title or "")
+        return self.title or ""
 
 
 # ----- Bài viết -----
 class Post(models.Model):
     title = models.CharField(max_length=200)
-    image = CloudinaryField('image', blank=True, null=True, folder="posts")
+    image = CloudinaryField(blank=True, null=True, folder="posts")
     content = RichTextUploadingField()
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return str(self.title or "")
-
-#capnhat
+        return self.title or ""
