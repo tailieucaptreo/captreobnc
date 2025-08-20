@@ -31,4 +31,5 @@ services:
         value: "1"
       - key: DJANGO_SETTINGS_MODULE
         value: tailieucaptreo.settings
-
+      - key: CLOUDINARY_URL
+        sync: false
