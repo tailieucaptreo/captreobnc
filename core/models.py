@@ -35,7 +35,8 @@ class Folder(models.Model):
 # ----- Tài liệu -----
 class Document(models.Model):
     title = models.CharField(max_length=255)
-    file = CloudinaryField(resource_type="auto", folder="documents")  # bỏ 'file' label cho gọn
+    file_url = models.URLField()  # chỉ lưu URL Cloudinary
+    #file = CloudinaryField(resource_type="auto", folder="documents")  # bỏ 'file' label cho gọn
     folder = models.ForeignKey(Folder, on_delete=models.CASCADE, related_name='documents', null=True, blank=True)
     uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE)
     uploaded_at = models.DateTimeField(auto_now_add=True)

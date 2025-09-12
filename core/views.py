@@ -70,13 +70,24 @@ def upload_document(request):
         folder = Folder.objects.get(id=folder_id) if folder_id else None
 
         for f in files:
-            f.name = slugify_filename(f.name)
+            safe_name = slugify_filename(f.name)
+
+            # Upload file lên Cloudinary (resource_type="raw" cho mọi loại file)
+            upload_result = cloudinary.uploader.upload(
+                f,
+                folder="documents/",
+                resource_type="raw",
+                public_id=safe_name.split(".")[0]
+            )
+
+            # Lưu vào DB
             Document.objects.create(
-                title=f.name,
-                file=f,
+                title=safe_name,
+                file_url=upload_result["secure_url"],
                 folder=folder,
                 uploaded_by=request.user
             )
+
         messages.success(request, "Tài liệu đã được tải lên thành công.")
         return redirect('home')
 
