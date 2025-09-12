@@ -18,7 +18,7 @@ class FolderForm(forms.ModelForm):
 class DocumentForm(forms.ModelForm):
     class Meta:
         model = Document
-        fields = ['title', 'file', 'folder']
+        fields = ['file_url', 'folder']
 
 
 class PostForm(forms.ModelForm):
@@ -26,4 +26,4 @@ class PostForm(forms.ModelForm):
 
     class Meta:
         model = Post
-        fields = ['title', 'file_url', 'folder']
+        fields = ['title', 'image', 'folder']
