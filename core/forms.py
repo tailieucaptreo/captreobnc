@@ -26,4 +26,4 @@ class PostForm(forms.ModelForm):
 
     class Meta:
         model = Post
-        fields = ['file_url', 'folder']
+        fields = ['title', 'file_url', 'folder']
