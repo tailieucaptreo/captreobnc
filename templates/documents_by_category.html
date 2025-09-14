@@ -22,7 +22,12 @@
           {% if user.is_staff %}
               - {{ doc.uploaded_by.username }}
           {% endif %}
-          [<a href="{% url 'download' doc.id %}">Tải xuống</a>]
+
+          {% if user.is_authenticated %}
+            [<a href="{% url 'download' doc.id %}">Tải xuống</a>]
+          {% else %}
+            [<a href="{% url 'login' %}" style="color:red;">Đăng nhập để tải</a>]
+          {% endif %}
         </li>
       {% empty %}
         <li>Chưa có tài liệu nào trong danh mục này.</li>

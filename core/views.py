@@ -9,6 +9,11 @@ from django.contrib import messages
 from django.http import JsonResponse
 from .models import Document, Category, Folder, Post
 from .forms import PostForm
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+import cloudinary.utils
+
 
 
 # ======= Helper function =======
@@ -252,3 +257,14 @@ def api_search_documents(request):
             } for doc in documents
         ]
     return JsonResponse(results, safe=False)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])  # chỉ user login mới vào được
+def get_signed_download(request, public_id):
+    url, options = cloudinary.utils.cloudinary_url(
+        public_id,
+        resource_type="raw",   # PDF, DOC, RAR... phải là raw
+        type="upload",
+        sign_url=True
+    )
+    return Response({"download_url": url})
