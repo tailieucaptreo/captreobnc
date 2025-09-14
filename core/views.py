@@ -1,5 +1,6 @@
 import unicodedata
 import re
+import cloudinary.uploader
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -99,8 +100,7 @@ def upload_document(request):
 @login_required
 def download_document(request, doc_id):
     doc = get_object_or_404(Document, id=doc_id)
-    # Redirect trực tiếp đến link Cloudinary để tải nhanh hơn
-    return redirect(doc.file.url)
+    return redirect(doc.file_url)  # dùng file_url thay vì file.url
 
 
 # ======= Xem tài liệu =======
@@ -117,8 +117,11 @@ def delete_document(request, doc_id):
         return render(request, 'no_permission.html')
 
     document = get_object_or_404(Document, id=doc_id)
-    if document.file:
-        document.file.delete(save=False)  # xóa file trên Cloudinary
+
+    # Xóa file trên Cloudinary
+    public_id = document.title.rsplit(".", 1)[0]  # bỏ phần đuôi .pdf/.docx
+    cloudinary.uploader.destroy(f"documents/{public_id}", resource_type="raw")
+
     document.delete()
     messages.success(request, "Tài liệu đã được xoá.")
     return redirect('home')
@@ -162,17 +165,20 @@ def create_folder(request, category_id):
     return render(request, 'create_folder.html', {'category': category})
 
 
+# ======= Xóa thư mục =======
 @login_required
 def delete_folder(request, folder_id):
     if not request.user.is_staff:
         return render(request, 'no_permission.html')
 
     folder = get_object_or_404(Folder, id=folder_id)
-    # Xóa tài liệu trong thư mục (file trên Cloudinary cũng sẽ bị xóa)
+
+    # Xóa tất cả tài liệu trong thư mục (Cloudinary + DB)
     for doc in Document.objects.filter(folder=folder):
-        if doc.file:
-            doc.file.delete(save=False)
+        public_id = doc.title.rsplit(".", 1)[0]
+        cloudinary.uploader.destroy(f"documents/{public_id}", resource_type="raw")
         doc.delete()
+
     folder.delete()
     messages.success(request, "Thư mục đã được xoá.")
     return redirect('category_detail', category_id=folder.category.id)
