@@ -4,7 +4,7 @@ from django.contrib.auth.views import LogoutView, LoginView
 from django.conf import settings
 from django.conf.urls.static import static
 from django.shortcuts import redirect
-from .views import get_signed_download
+from core.views import get_signed_download
 
 def google_login(request):
     return redirect('social:begin', backend='google-oauth2')
