@@ -87,7 +87,7 @@ def upload_document(request):
                 folder="documents",
                 resource_type="raw",
                 use_filename=True,
-                unique_filename=True,
+                unique_filename=False,
                 public_id=safe_name
             )
 
