@@ -113,13 +113,18 @@ def download_document(request, document_id):
     if not doc.file_public_id:
         return redirect(doc.file_url)
 
-    signed_url, _ = cloudinary.utils.cloudinary_url(
-        doc.file_public_id,
-        resource_type="raw",
-        type="upload",
-        sign_url=True
-    )
-    return redirect(signed_url)
+    try:
+        signed_url, _ = cloudinary.utils.cloudinary_url(
+            doc.file_public_id,
+            resource_type="raw",   # quan trọng!
+            type="upload",
+            sign_url=True,
+            secure=True
+        )
+        return redirect(signed_url)
+    except Exception as e:
+        from django.http import HttpResponseServerError
+        return HttpResponseServerError(f"Lỗi tải file: {str(e)}")
 
 
 # ======= Xem tài liệu =======
