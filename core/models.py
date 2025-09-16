@@ -4,6 +4,7 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from cloudinary.models import CloudinaryField
 import unicodedata
 import re
+from django.contrib.auth.models import User
 
 
 # ----- Danh mục chính -----
@@ -36,7 +37,7 @@ class Folder(models.Model):
 class Document(models.Model):
     title = models.CharField(max_length=255)
     file_url = models.URLField(max_length=500, null=True, blank=True)
-    #file = CloudinaryField(resource_type="auto", folder="documents")  # bỏ 'file' label cho gọn
+    file_public_id = models.CharField(max_length=255, blank=True, null=True)  # thêm field này
     folder = models.ForeignKey(Folder, on_delete=models.CASCADE, related_name='documents', null=True, blank=True)
     uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE)
     uploaded_at = models.DateTimeField(auto_now_add=True)

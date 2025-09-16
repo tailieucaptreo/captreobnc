@@ -67,45 +67,39 @@ def documents_by_category(request, category_id):
 # ======= Upload tài liệu =======
 @login_required
 def upload_document(request):
-    if not request.user.is_staff:
-        return render(request, 'no_permission.html')
+    if request.method == "POST":
+        file = request.FILES["file"]
+        upload_result = cloudinary.uploader.upload(
+            file,
+            resource_type="raw",    # để upload pdf/doc/rar
+            folder="documents"
+        )
+        Document.objects.create(
+            title=upload_result["original_filename"],
+            file_url=upload_result["secure_url"],
+            file_public_id=upload_result["public_id"],   # lưu lại public_id
+            uploaded_by=request.user
+        )
+        return redirect("home")
 
-    if request.method == 'POST':
-        files = request.FILES.getlist('files')
-        folder_id = request.POST.get('folder')
-        folder = Folder.objects.get(id=folder_id) if folder_id else None
-
-        for f in files:
-            safe_name = slugify_filename(f.name)
-
-            # Upload file lên Cloudinary (resource_type="raw" cho mọi loại file)
-            upload_result = cloudinary.uploader.upload(
-                f,
-                folder="documents/",
-                resource_type="raw",
-                public_id=safe_name.split(".")[0]
-            )
-
-            # Lưu vào DB
-            Document.objects.create(
-                title=safe_name,
-                file_url=upload_result["secure_url"],
-                folder=folder,
-                uploaded_by=request.user
-            )
-
-        messages.success(request, "Tài liệu đã được tải lên thành công.")
-        return redirect('home')
-
-    folders = Folder.objects.all()
-    return render(request, 'upload.html', {'folders': folders})
+    return render(request, "upload.html")
 
 
 # ======= Download tài liệu từ Cloudinary =======
 @login_required
-def download_document(request, doc_id):
-    doc = get_object_or_404(Document, id=doc_id)
-    return redirect(doc.file_url)  # dùng file_url thay vì file.url
+def download_document(request, document_id):
+    doc = get_object_or_404(Document, id=document_id)
+
+    if not doc.file_public_id:
+        return redirect(doc.file_url)  # fallback nếu chưa lưu public_id
+
+    signed_url, _ = cloudinary.utils.cloudinary_url(
+        doc.file_public_id,
+        resource_type="raw",
+        type="upload",
+        sign_url=True
+    )
+    return redirect(signed_url)
 
 
 # ======= Xem tài liệu =======
