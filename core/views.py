@@ -64,6 +64,8 @@ def documents_by_category(request, category_id):
 
 
 # ======= Upload tài liệu =======
+import os
+
 @login_required
 def upload_document(request):
     if request.method == "POST":
@@ -75,26 +77,22 @@ def upload_document(request):
             folder = Folder.objects.filter(id=folder_id).first()
 
         for file in files:
-            # Giữ lại extension
-            if "." in file.name:
-                name, ext = file.name.rsplit(".", 1)
-                safe_name = f"{slugify_filename(name)}.{ext}"
-            else:
-                safe_name = slugify_filename(file.name)
+            name, ext = os.path.splitext(file.name)
+            safe_name = slugify_filename(name)
 
             upload_result = cloudinary.uploader.upload(
                 file,
                 folder="documents",
                 resource_type="raw",
                 use_filename=True,
-                unique_filename=False,
+                unique_filename=True,
                 public_id=safe_name
             )
 
             Document.objects.create(
                 title=file.name,
                 file_url=upload_result["secure_url"],
-                file_public_id=upload_result["public_id"],  # chuẩn Cloudinary
+                file_public_id=upload_result["public_id"],  # public_id chuẩn, không có .pdf
                 uploaded_by=request.user,
                 folder=folder
             )
@@ -102,6 +100,7 @@ def upload_document(request):
 
     folders = Folder.objects.all()
     return render(request, "upload.html", {"folders": folders})
+
 
 
 
