@@ -68,21 +68,32 @@ def documents_by_category(request, category_id):
 @login_required
 def upload_document(request):
     if request.method == "POST":
-        file = request.FILES["file"]
-        upload_result = cloudinary.uploader.upload(
-            file,
-            resource_type="raw",    # để upload pdf/doc/rar
-            folder="documents"
-        )
-        Document.objects.create(
-            title=upload_result["original_filename"],
-            file_url=upload_result["secure_url"],
-            file_public_id=upload_result["public_id"],   # lưu lại public_id
-            uploaded_by=request.user
-        )
+        files = request.FILES.getlist("files")
+        folder_id = request.POST.get("folder")
+
+        folder = None
+        if folder_id and folder_id.isdigit():
+            folder = Folder.objects.filter(id=folder_id).first()
+
+        for file in files:
+            upload_result = cloudinary.uploader.upload(
+                file,
+                folder="documents",
+                resource_type="raw"
+            )
+
+            Document.objects.create(
+                title=upload_result["original_filename"],
+                file_url=upload_result["secure_url"],
+                file_public_id=upload_result["public_id"],
+                uploaded_by=request.user,
+                folder=folder
+            )
         return redirect("home")
 
-    return render(request, "upload.html")
+    # 👇 Lấy tất cả thư mục để truyền cho template
+    folders = Folder.objects.all()
+    return render(request, "upload.html", {"folders": folders})
 
 
 # ======= Download tài liệu từ Cloudinary =======
