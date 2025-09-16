@@ -1,6 +1,7 @@
 import unicodedata
 import re
 import cloudinary.uploader
+import cloudinary.utils
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -12,8 +13,6 @@ from .forms import PostForm
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-import cloudinary.utils
-
 
 
 # ======= Helper function =======
@@ -81,14 +80,13 @@ def upload_document(request):
                 folder="documents",
                 resource_type="raw",
                 use_filename=True,
-                unique_filename=True,
-                public_id=slugify_filename(file.name.rsplit(".", 1)[0])  # giữ tên gốc
+                unique_filename=True
             )
 
             Document.objects.create(
                 title=file.name,
                 file_url=upload_result["secure_url"],
-                file_public_id=upload_result["public_id"],  # lưu đúng public_id
+                file_public_id=upload_result["public_id"],
                 uploaded_by=request.user,
                 folder=folder
             )
@@ -130,7 +128,6 @@ def delete_document(request, doc_id):
 
     document = get_object_or_404(Document, id=doc_id)
 
-    # Xoá trên Cloudinary bằng file_public_id
     if document.file_public_id:
         cloudinary.uploader.destroy(document.file_public_id, resource_type="raw")
 
@@ -185,10 +182,9 @@ def delete_folder(request, folder_id):
 
     folder = get_object_or_404(Folder, id=folder_id)
 
-    # Xóa tất cả tài liệu trong thư mục (Cloudinary + DB)
     for doc in Document.objects.filter(folder=folder):
-        public_id = doc.title.rsplit(".", 1)[0]
-        cloudinary.uploader.destroy(f"documents/{public_id}", resource_type="raw")
+        if doc.file_public_id:
+            cloudinary.uploader.destroy(doc.file_public_id, resource_type="raw")
         doc.delete()
 
     folder.delete()
@@ -265,12 +261,14 @@ def api_search_documents(request):
         ]
     return JsonResponse(results, safe=False)
 
+
+# ======= API download có ký tên =======
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])  # chỉ user login mới vào được
+@permission_classes([IsAuthenticated])  
 def get_signed_download(request, public_id):
     url, options = cloudinary.utils.cloudinary_url(
         public_id,
-        resource_type="raw",   # PDF, DOC, RAR... phải là raw
+        resource_type="raw",
         type="upload",
         sign_url=True
     )
