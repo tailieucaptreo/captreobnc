@@ -75,18 +75,21 @@ def upload_document(request):
             folder = Folder.objects.filter(id=folder_id).first()
 
         for file in files:
+            safe_name = slugify_filename(file.name.rsplit(".", 1)[0])
+
             upload_result = cloudinary.uploader.upload(
                 file,
                 folder="documents",
                 resource_type="raw",
                 use_filename=True,
-                unique_filename=True
+                unique_filename=False,
+                public_id=safe_name
             )
 
             Document.objects.create(
                 title=file.name,
                 file_url=upload_result["secure_url"],
-                file_public_id=upload_result["public_id"],
+                file_public_id=upload_result["public_id"],  # lưu đúng public_id
                 uploaded_by=request.user,
                 folder=folder
             )
@@ -94,6 +97,7 @@ def upload_document(request):
 
     folders = Folder.objects.all()
     return render(request, "upload.html", {"folders": folders})
+
 
 
 # ======= Download tài liệu từ Cloudinary =======
