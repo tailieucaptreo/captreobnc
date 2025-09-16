@@ -79,19 +79,21 @@ def upload_document(request):
             upload_result = cloudinary.uploader.upload(
                 file,
                 folder="documents",
-                resource_type="raw"
+                resource_type="raw",
+                use_filename=True,
+                unique_filename=True,
+                public_id=slugify_filename(file.name.rsplit(".", 1)[0])  # giữ tên gốc
             )
 
             Document.objects.create(
-                title=upload_result["original_filename"],
+                title=file.name,
                 file_url=upload_result["secure_url"],
-                file_public_id=upload_result["public_id"],
+                file_public_id=upload_result["public_id"],  # lưu đúng public_id
                 uploaded_by=request.user,
                 folder=folder
             )
         return redirect("home")
 
-    # 👇 Lấy tất cả thư mục để truyền cho template
     folders = Folder.objects.all()
     return render(request, "upload.html", {"folders": folders})
 
@@ -102,7 +104,7 @@ def download_document(request, document_id):
     doc = get_object_or_404(Document, id=document_id)
 
     if not doc.file_public_id:
-        return redirect(doc.file_url)  # fallback nếu chưa lưu public_id
+        return redirect(doc.file_url)
 
     signed_url, _ = cloudinary.utils.cloudinary_url(
         doc.file_public_id,
@@ -128,9 +130,9 @@ def delete_document(request, doc_id):
 
     document = get_object_or_404(Document, id=doc_id)
 
-    # Xóa file trên Cloudinary
-    public_id = document.title.rsplit(".", 1)[0]  # bỏ phần đuôi .pdf/.docx
-    cloudinary.uploader.destroy(f"documents/{public_id}", resource_type="raw")
+    # Xoá trên Cloudinary bằng file_public_id
+    if document.file_public_id:
+        cloudinary.uploader.destroy(document.file_public_id, resource_type="raw")
 
     document.delete()
     messages.success(request, "Tài liệu đã được xoá.")
